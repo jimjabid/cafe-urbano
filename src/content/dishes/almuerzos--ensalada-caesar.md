@@ -1,7 +1,9 @@
 ---
-name: "Ensalada Caesar"
+name: Ensalada Caesar
 price: 12500
-category: "almuerzos"
+category: almuerzos
+description: "Lechuga, pollo, croutons de masa madre, queso parmesano y aderezo
+  caesar. Prueba  "
 order: 60
-description: "Lechuga, pollo, croutons de masa madre, queso parmesano y aderezo caesar."
+available: true
 ---
