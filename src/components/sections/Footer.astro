@@ -1,0 +1,28 @@
+---
+import { getEntry } from 'astro:content';
+
+const settingsEntry = await getEntry('settings', 'settings');
+if (!settingsEntry) throw new Error('Missing src/content/site/settings.yaml');
+const s = settingsEntry.data;
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-surface-subtle">
+  <div class="mx-auto max-w-2xl px-6 py-10 text-center" data-animate-section>
+    <p class="font-semibold">{s.tagline}</p>
+    {
+      s.socials.length > 0 && (
+        <nav class="mt-4 flex justify-center gap-6">
+          {s.socials.map((x) => (
+            <a href={x.url} rel="noopener" target="_blank" class="text-ink-soft underline-offset-4 hover:underline">
+              {x.label}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+    <p class="mt-6 text-sm text-ink-soft">
+      © {year} {s.businessName}
+    </p>
+  </div>
+</footer>

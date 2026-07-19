@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+
+/*
+ * Brand tokens — the ONLY place colors are defined.
+ * Café Urbano brand: white ground, near-black ink, pastel category dots
+ * sampled from the printed menu (projects/cafe-urbano/current-menu/).
+ * Components use utilities (bg-brand, text-ink…) — raw hex in a component is a review violation.
+ */
+@theme {
+  --color-brand: #1a1a1a;
+  --color-accent: #e8734a;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f6f5f2;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #55534f;
+
+  /* Category accent dots — one per menu category (categories/*.yaml `dot` field) */
+  --color-dot-pink: #e3aed4;
+  --color-dot-green: #c9dc8f;
+  --color-dot-peach: #f2b096;
+  --color-dot-olive: #cdb84e;
+  --color-dot-mint: #9fd6b5;
+  --color-dot-yellow: #e8dc72;
+  --color-dot-purple: #cda9e0;
+  --color-dot-lime: #c4e06e;
+  --color-dot-teal: #8fd0dc;
+  --color-dot-coral: #f2bc9e;
+
+  --radius-card: 20px;
+  --radius-pill: 100px;
+
+  --font-sans: "Poppins", system-ui, "Segoe UI", sans-serif;
+}
+
+/*
+ * Tailwind v4: ALL custom CSS goes inside @layer — un-layered CSS has higher
+ * specificity than utilities and silently overrides them.
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+}
+
+@layer components {
+  /* Horizontal filter bar hides its scrollbar; the right-edge fade is the scroll cue */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

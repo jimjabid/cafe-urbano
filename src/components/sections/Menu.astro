@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import MenuBoard from '../islands/MenuBoard.tsx';
+import placeholderInfusiones from '../../assets/placeholders/infusiones.svg?url';
+import placeholderBakery from '../../assets/placeholders/bakery.svg?url';
+import placeholderSalados from '../../assets/placeholders/salados.svg?url';
+
+const categories = (await getCollection('categories'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((c) => ({
+    id: c.id,
+    title: c.data.title,
+    dot: c.data.dot,
+    placeholder: c.data.placeholder,
+    note: c.data.note,
+  }));
+
+const dishEntries = (await getCollection('dishes'))
+  .filter((d) => d.data.available)
+  .sort((a, b) => a.data.order - b.data.order);
+
+// Real photos get optimized at build; the island receives plain URLs.
+const dishes = await Promise.all(
+  dishEntries.map(async (d) => ({
+    slug: d.id,
+    name: d.data.name,
+    variant: d.data.variant,
+    price: d.data.price,
+    category: d.data.category,
+    description: d.data.description,
+    image: d.data.image
+      ? (await getImage({ src: d.data.image, width: 800, format: 'webp' })).src
+      : undefined,
+  }))
+);
+
+const promos = (await getCollection('promos'))
+  .filter((p) => p.data.enabled)
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((p) => ({ id: p.id, text: p.data.text, afterCategory: p.data.afterCategory }));
+
+const placeholders = {
+  infusiones: placeholderInfusiones,
+  bakery: placeholderBakery,
+  salados: placeholderSalados,
+};
+---
+
+<section id="menu" aria-label="Menú">
+  {/* client:load, not client:visible: the menu starts above the fold and IS the page — deferring hydration would delay the sticky filter. */}
+  <MenuBoard client:load categories={categories} dishes={dishes} promos={promos} placeholders={placeholders} />
+</section>

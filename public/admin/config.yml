@@ -1,0 +1,113 @@
+# Decap CMS config — keep in sync with src/content.config.ts (the zod schemas are the contract).
+# Regenerate/validate with the decap-config-writer skill after any schema change.
+
+backend:
+  name: git-gateway
+  repo: TODO-org/TODO-client-repo # the CLIENT repo, not the harness
+  branch: main
+  # DecapBridge proxies git-gateway — never Netlify Identity
+  identity_url: https://auth.decapbridge.com/sites/TODO-site-id
+  gateway_url: https://gateway.decapbridge.com
+  commit_messages:
+    create: "content: create {{collection}} '{{slug}}'"
+    update: "content: update {{collection}} '{{slug}}'"
+
+# media_folder = git path where Decap COMMITS uploads (inside src/ so astro:assets optimizes them)
+# public_folder = path written into frontmatter, relative per-collection below
+media_folder: "src/assets/uploads"
+public_folder: "/src/assets/uploads"
+
+collections:
+  - name: site
+    label: "Sitio"
+    files:
+      - name: settings
+        label: "Datos del negocio"
+        file: "src/content/site/settings.yaml"
+        fields:
+          - { name: businessName, label: "Nombre del negocio", widget: string }
+          - { name: tagline, label: "Frase / tagline", widget: string }
+          - { name: phone, label: "Teléfono", widget: string }
+          - { name: whatsapp, label: "WhatsApp", widget: string, required: false }
+          - { name: email, label: "Email", widget: string, required: false }
+          - name: address
+            label: "Dirección"
+            widget: object
+            fields:
+              - { name: street, label: "Calle", widget: string }
+              - { name: locality, label: "Localidad / Barrio", widget: string }
+              - { name: region, label: "Provincia", widget: string }
+              - { name: postalCode, label: "Código postal", widget: string }
+              - { name: country, label: "País", widget: string, default: "AR" }
+          - name: geo
+            label: "Coordenadas"
+            widget: object
+            required: false
+            fields:
+              - { name: latitude, label: "Latitud", widget: number, value_type: float }
+              - { name: longitude, label: "Longitud", widget: number, value_type: float }
+          - name: hours
+            label: "Horarios"
+            widget: list
+            fields:
+              - { name: days, label: "Días", widget: string }
+              - { name: opens, label: "Abre", widget: string }
+              - { name: closes, label: "Cierra", widget: string }
+          - { name: priceRange, label: "Rango de precios", widget: string, required: false }
+          - name: socials
+            label: "Redes"
+            widget: list
+            required: false
+            fields:
+              - { name: label, label: "Red", widget: string }
+              - { name: url, label: "URL", widget: string }
+          - { name: schemaType, label: "Tipo schema.org", widget: hidden, default: "Restaurant" }
+          - name: seo
+            label: "SEO"
+            widget: object
+            fields:
+              - { name: titleSuffix, label: "Sufijo de título", widget: string }
+              - { name: description, label: "Meta description (≤160)", widget: text }
+              - { name: ogImage, label: "Imagen para compartir", widget: image, required: false }
+      - name: hero
+        label: "Portada (hero)"
+        file: "src/content/site/hero.yaml"
+        media_folder: ""
+        public_folder: ""
+        fields:
+          - { name: headline, label: "Titular", widget: string }
+          - { name: subheadline, label: "Bajada", widget: string }
+          - { name: ctaLabel, label: "Texto del botón", widget: string }
+          - { name: ctaHref, label: "Link del botón", widget: string }
+          - { name: image, label: "Imagen de fondo", widget: image, required: false }
+          - { name: imageAlt, label: "Texto alternativo", widget: string, required: false }
+
+  - name: dishes
+    label: "Platos"
+    folder: "src/content/dishes"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { name: name, label: "Nombre", widget: string }
+      - { name: description, label: "Descripción", widget: text, required: false }
+      - { name: price, label: "Precio (texto)", widget: string }
+      - name: category
+        label: "Categoría"
+        widget: select
+        options: ["entradas", "principales", "postres", "bebidas"]
+      - { name: vegetarian, label: "Vegetariano", widget: boolean, default: false }
+      - { name: featured, label: "Destacado", widget: boolean, default: false }
+      - { name: order, label: "Orden", widget: number, default: 0 }
+      - { name: body, label: "(no usado)", widget: hidden, required: false }
+
+  - name: testimonials
+    label: "Testimonios"
+    folder: "src/content/testimonials"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { name: author, label: "Autor", widget: string }
+      - { name: quote, label: "Testimonio", widget: text }
+      - { name: rating, label: "Puntaje (1–5)", widget: number, min: 1, max: 5, required: false }
+      - { name: order, label: "Orden", widget: number, default: 0 }
+      - { name: body, label: "(no usado)", widget: hidden, required: false }

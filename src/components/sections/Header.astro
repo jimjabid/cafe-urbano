@@ -1,0 +1,29 @@
+---
+import { getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import logo from '../../assets/logo-urbano.png';
+
+const settingsEntry = await getEntry('settings', 'settings');
+if (!settingsEntry) throw new Error('Missing src/content/site/settings.yaml');
+const s = settingsEntry.data;
+---
+
+<header class="bg-surface pt-8 pb-4 text-center">
+  <div class="mx-auto max-w-2xl px-6">
+    <Image
+      src={logo}
+      alt={`${s.businessName} — Buenos Aires`}
+      class="mx-auto w-56 md:w-64 h-auto"
+      widths={[280, 512]}
+      sizes="(min-width: 768px) 256px, 224px"
+      loading="eager"
+      data-animate="header-logo"
+    />
+    <p
+      class="mt-5 inline-block rounded-pill border-2 border-ink px-6 py-2.5 text-sm md:text-base italic"
+      data-animate="header-greeting"
+    >
+      {s.greeting}
+    </p>
+  </div>
+</header>

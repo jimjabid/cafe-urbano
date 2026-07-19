@@ -1,0 +1,54 @@
+---
+import { getEntry } from 'astro:content';
+
+const settingsEntry = await getEntry('settings', 'settings');
+if (!settingsEntry) throw new Error('Missing src/content/site/settings.yaml');
+const s = settingsEntry.data;
+
+// NAP shown here must match the JSON-LD in Seo.astro exactly — same source, so it does.
+// Pure menu site: informational links only, no CTA buttons (brief, 2026-07-19).
+---
+
+<section id="contacto" class="mx-auto max-w-2xl px-6 py-16" data-animate-section>
+  <h2 class="text-2xl font-bold uppercase tracking-wide text-center">Dónde encontrarnos</h2>
+  <div class="mt-8 grid gap-8 sm:grid-cols-2 text-center sm:text-left">
+    <address class="not-italic space-y-2">
+      <p class="font-semibold text-lg">{s.businessName}</p>
+      <p class="text-ink-soft">
+        {s.address.street}<br />
+        {s.address.locality}, {s.address.region}
+      </p>
+      {
+        s.mapsUrl && (
+          <p>
+            <a href={s.mapsUrl} rel="noopener" target="_blank" class="font-medium underline underline-offset-4">
+              Cómo llegar
+            </a>
+          </p>
+        )
+      }
+      {
+        s.whatsapp && (
+          <p class="text-ink-soft">
+            WhatsApp:{' '}
+            <a href={`https://wa.me/${s.whatsapp.replace(/\D/g, '')}`} class="font-medium underline underline-offset-4">
+              {s.whatsapp}
+            </a>
+          </p>
+        )
+      }
+    </address>
+    <div>
+      <h3 class="font-semibold">Horarios</h3>
+      <ul class="mt-2 space-y-1 text-ink-soft">
+        {
+          s.hours.map((h) => (
+            <li>
+              {h.days}: {h.opens}–{h.closes} hs
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

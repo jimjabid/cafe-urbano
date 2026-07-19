@@ -1,0 +1,29 @@
+---
+import Seo from '../components/Seo.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <meta name="generator" content={Astro.generator} />
+    <!-- Prototype stage: demo URL must not become the canonical result for the business name. Remove at production cutover. -->
+    <meta name="robots" content="noindex" />
+    <Seo title={title} description={description} />
+  </head>
+  <body>
+    <slot />
+    <script src="../scripts/motion.ts"></script>
+  </body>
+</html>

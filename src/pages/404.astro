@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Página no encontrada" description="La página que buscás no existe.">
+  <main class="mx-auto flex min-h-[70vh] max-w-2xl flex-col items-center justify-center px-6 text-center">
+    <h1 class="text-5xl font-bold">404</h1>
+    <p class="mt-4 text-ink-soft">La página que buscás no existe.</p>
+    <a href={base} class="mt-8 inline-block rounded-pill bg-ink px-8 py-4 font-semibold text-surface">
+      Volver al menú
+    </a>
+  </main>
+</Base>

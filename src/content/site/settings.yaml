@@ -1,0 +1,26 @@
+businessName: "Café Urbano"
+tagline: "Café & Arte — Pastelería, Almuerzos & Brunch"
+greeting: "Hola! Pedí en la caja y te traemos el pedido a la mesa!"
+# TODO(client): WhatsApp number pending — uncomment when provided
+# whatsapp: "+54 9 11 0000-0000"
+address:
+  street: "Donado 1901 (esquina Sucre)"
+  locality: "Villa Urquiza"
+  region: "CABA"
+  postalCode: "1430"
+  country: "AR"
+mapsUrl: "https://maps.google.com/?q=Donado+1901,+Buenos+Aires,+Argentina"
+hours:
+  # TODO(client): bio says 8 a 20:30 without days — confirm open days
+  - days: "Lun–Dom"
+    opens: "08:00"
+    closes: "20:30"
+priceRange: "$$"
+socials:
+  - label: "Instagram"
+    url: "https://www.instagram.com/cafeurbanobsas/"
+schemaType: "CafeOrCoffeeShop"
+seo:
+  titleSuffix: "Café Urbano | Café & Arte en Villa Urquiza"
+  description: "Café de especialidad, pastelería, brunch y almuerzos en Donado 1901, Villa Urquiza. Mirá el menú completo con precios actualizados."
+  ogImage: "og.jpg"

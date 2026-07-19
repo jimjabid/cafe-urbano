@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-14 h-14 text-gray-800 bg-gray-50 border border-gray-100 rounded-lg p-2 shadow-sm">
+  <!-- Main Cup Body -->
+  <path d="M16 20v14c0 7.732 6.268 14 14 14h4c7.732 0 14-6.268 14-14V20H16z" />
+  <!-- Cup Handle -->
+  <path d="M48 26h4c3.314 0 6 2.686 6 6v2c0 3.314-2.686 6-6 6h-4" />
+  <!-- Minimalist Steam -->
+  <path d="M26 12v4" />
+  <path d="M34 10v6" />
+  <path d="M42 12v4" />
+</svg>

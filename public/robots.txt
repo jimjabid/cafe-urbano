@@ -1,0 +1,13 @@
+# Prototype (GitHub Pages) — do not index, but let social bots render OG cards.
+# At production cutover replace with: allow all + sitemap line.
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: *
+Disallow: /
