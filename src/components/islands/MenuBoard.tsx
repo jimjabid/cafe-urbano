@@ -36,6 +36,12 @@ interface Props {
 
 const dotStyle = (dot: string) => ({ backgroundColor: `var(--color-dot-${dot})` });
 
+// Active pill: soft tint of the category's own pastel — black bg broke the minimal style
+const activePillStyle = (dot: string) => ({
+  backgroundColor: `color-mix(in srgb, var(--color-dot-${dot}) 35%, var(--color-surface))`,
+  borderColor: `var(--color-dot-${dot})`,
+});
+
 export default function MenuBoard({ categories, dishes, promos, placeholders }: Props) {
   const [active, setActive] = useState<string>(categories[0]?.id ?? '');
   const [open, setOpen] = useState<string | null>(null);
@@ -145,11 +151,10 @@ export default function MenuBoard({ categories, dishes, promos, placeholders }: 
                 aria-selected={active === c.id}
                 onClick={() => jumpTo(c.id)}
                 className={
-                  'flex shrink-0 items-center gap-2 rounded-pill border px-4 py-1.5 text-sm transition-colors ' +
-                  (active === c.id
-                    ? 'border-ink bg-ink font-medium text-surface'
-                    : 'border-ink/25 bg-surface text-ink')
+                  'flex shrink-0 items-center gap-2 rounded-pill border px-4 py-1.5 text-sm text-ink transition-colors ' +
+                  (active === c.id ? 'font-medium' : 'border-ink/25 bg-surface')
                 }
+                style={active === c.id ? activePillStyle(c.dot) : undefined}
               >
                 <span aria-hidden="true" className="h-2 w-2 rounded-full" style={dotStyle(c.dot)} />
                 {c.title}
@@ -238,8 +243,10 @@ export default function MenuBoard({ categories, dishes, promos, placeholders }: 
                                 <em className="ml-1.5 font-normal text-ink-soft"> {d.variant}</em>
                               )}
                             </span>
-                            <span className="whitespace-nowrap font-medium">
+                            <span className="flex items-center gap-2.5 whitespace-nowrap font-medium">
                               {isExtra ? `+${d.price}` : d.price}
+                              {/* phantom chevron keeps the price column aligned with expandable rows */}
+                              <span aria-hidden="true" className="h-3 w-3" />
                             </span>
                           </div>
                         )}
