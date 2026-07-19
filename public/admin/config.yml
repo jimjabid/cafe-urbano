@@ -119,6 +119,7 @@ collections:
         widget: select
         options: ["infusiones", "bakery", "salados"]
         default: "bakery"
+        required: false
       - { name: note, label: "Nota (ej. horario)", widget: string, required: false }
 
   - name: dishes
@@ -144,8 +145,9 @@ collections:
         value_field: "{{slug}}"
       - { name: description, label: "Descripción", widget: text, required: false }
       - { name: image, label: "Foto (opcional)", widget: image, required: false }
-      - { name: order, label: "Orden dentro de la categoría", widget: number, default: 0 }
-      - { name: available, label: "Disponible", widget: boolean, default: true }
+      # zod defaults these — entries without them are valid, so the CMS must not demand them
+      - { name: order, label: "Orden dentro de la categoría", widget: number, default: 0, required: false }
+      - { name: available, label: "Disponible", widget: boolean, default: true, required: false }
 
   - name: promos
     label: "Promos / banners"
@@ -164,5 +166,5 @@ collections:
         search_fields: [title]
         display_fields: [title]
         value_field: "{{slug}}"
-      - { name: order, label: "Orden", widget: number, default: 0 }
-      - { name: enabled, label: "Activada", widget: boolean, default: true }
+      - { name: order, label: "Orden", widget: number, default: 0, required: false }
+      - { name: enabled, label: "Activada", widget: boolean, default: true, required: false }
