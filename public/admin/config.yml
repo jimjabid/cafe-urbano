@@ -1,24 +1,45 @@
 # Decap CMS config — keep in sync with src/content.config.ts (the zod schemas are the contract).
 # Regenerate/validate with the decap-config-writer skill after any schema change.
 
+# DecapBridge PKCE auth (site 5213c873-14b8-4019-8e96-e410663cc9e0) — never Netlify Identity.
+# Requires Decap CMS >= 3.8.3 (pinned in admin/index.html).
 backend:
   name: git-gateway
-  repo: TODO-org/TODO-client-repo # the CLIENT repo, not the harness
+  repo: jimjabid/cafe-urbano # the CLIENT repo, not the harness
   branch: main
-  # DecapBridge proxies git-gateway — never Netlify Identity
-  identity_url: https://auth.decapbridge.com/sites/TODO-site-id
+  auth_type: pkce
+  base_url: https://auth.decapbridge.com
+  auth_endpoint: /sites/5213c873-14b8-4019-8e96-e410663cc9e0/pkce
+  auth_token_endpoint: /sites/5213c873-14b8-4019-8e96-e410663cc9e0/token
   gateway_url: https://gateway.decapbridge.com
   commit_messages:
-    create: "content: create {{collection}} '{{slug}}'"
-    update: "content: update {{collection}} '{{slug}}'"
+    create: "content: create {{collection}} '{{slug}}' — {{author-name}} <{{author-login}}> via DecapBridge"
+    update: "content: update {{collection}} '{{slug}}' — {{author-name}} <{{author-login}}> via DecapBridge"
+    delete: "content: delete {{collection}} '{{slug}}' — {{author-name}} <{{author-login}}> via DecapBridge"
+    uploadMedia: "content: upload '{{path}}' — {{author-name}} <{{author-login}}> via DecapBridge"
+    deleteMedia: "content: delete '{{path}}' — {{author-name}} <{{author-login}}> via DecapBridge"
 
-# media_folder = git path where Decap COMMITS uploads (inside src/ so astro:assets optimizes them)
-# public_folder = path written into frontmatter, relative per-collection below
-media_folder: "src/assets/uploads"
-public_folder: "/src/assets/uploads"
+# PKCE identity claims (populate author name/avatar in the UI)
+auth:
+  email_claim: email
+  first_name_claim: first_name
+  last_name_claim: last_name
+  avatar_url_claim: avatar_url
+
+# Harmless in prod — only activates when `npx decap-server` runs locally.
+local_backend: true
+
+logo_url: https://jimjabid.github.io/cafe-urbano/og-logo.jpg
+site_url: https://jimjabid.github.io/cafe-urbano
+display_url: https://jimjabid.github.io/cafe-urbano
+
+# GLOBAL fallback only — every image field below overrides these.
+# media_folder = git path where Decap COMMITS uploads; public_folder = URL the site SERVES them from.
+media_folder: "public/uploads"
+public_folder: "/uploads"
 
 collections:
-  - name: site
+  - name: settings
     label: "Sitio"
     files:
       - name: settings
@@ -27,7 +48,8 @@ collections:
         fields:
           - { name: businessName, label: "Nombre del negocio", widget: string }
           - { name: tagline, label: "Frase / tagline", widget: string }
-          - { name: phone, label: "Teléfono", widget: string }
+          - { name: greeting, label: "Saludo del menú (globo de diálogo)", widget: string }
+          - { name: phone, label: "Teléfono", widget: string, required: false }
           - { name: whatsapp, label: "WhatsApp", widget: string, required: false }
           - { name: email, label: "Email", widget: string, required: false }
           - name: address
@@ -46,6 +68,7 @@ collections:
             fields:
               - { name: latitude, label: "Latitud", widget: number, value_type: float }
               - { name: longitude, label: "Longitud", widget: number, value_type: float }
+          - { name: mapsUrl, label: "Link de Google Maps", widget: string, required: false }
           - name: hours
             label: "Horarios"
             widget: list
@@ -61,53 +84,85 @@ collections:
             fields:
               - { name: label, label: "Red", widget: string }
               - { name: url, label: "URL", widget: string }
-          - { name: schemaType, label: "Tipo schema.org", widget: hidden, default: "Restaurant" }
+          - { name: schemaType, label: "Tipo schema.org", widget: hidden, default: "CafeOrCoffeeShop" }
           - name: seo
             label: "SEO"
             widget: object
             fields:
               - { name: titleSuffix, label: "Sufijo de título", widget: string }
-              - { name: description, label: "Meta description (≤160)", widget: text }
-              - { name: ogImage, label: "Imagen para compartir", widget: image, required: false }
-      - name: hero
-        label: "Portada (hero)"
-        file: "src/content/site/hero.yaml"
-        media_folder: ""
-        public_folder: ""
-        fields:
-          - { name: headline, label: "Titular", widget: string }
-          - { name: subheadline, label: "Bajada", widget: string }
-          - { name: ctaLabel, label: "Texto del botón", widget: string }
-          - { name: ctaHref, label: "Link del botón", widget: string }
-          - { name: image, label: "Imagen de fondo", widget: image, required: false }
-          - { name: imageAlt, label: "Texto alternativo", widget: string, required: false }
+              - { name: description, label: "Meta description (máx. 160)", widget: text }
+              # og-logo.jpg lives in public/ and Seo.astro resolves it against the site base URL
+              - name: ogImage
+                label: "Imagen para compartir"
+                widget: image
+                required: false
+                media_folder: "/public"
+                public_folder: "/"
+
+  - name: categories
+    label: "Categorías del menú"
+    folder: "src/content/categories"
+    extension: "yaml"
+    format: "yaml"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    fields:
+      - { name: title, label: "Título", widget: string }
+      - { name: order, label: "Orden (sección y filtro)", widget: number, default: 0 }
+      - name: dot
+        label: "Color del punto"
+        widget: select
+        options: ["pink", "green", "peach", "olive", "mint", "yellow", "purple", "lime", "teal", "coral"]
+      - name: placeholder
+        label: "Ilustración por defecto"
+        widget: select
+        options: ["infusiones", "bakery", "salados"]
+        default: "bakery"
+      - { name: note, label: "Nota (ej. horario)", widget: string, required: false }
 
   - name: dishes
     label: "Platos"
     folder: "src/content/dishes"
     create: true
     slug: "{{slug}}"
+    identifier_field: name
+    # Photos are committed next to the entries so astro:assets can optimize them;
+    # public_folder "./images" writes the relative path image() expects.
+    media_folder: "images"
+    public_folder: "./images"
     fields:
       - { name: name, label: "Nombre", widget: string }
-      - { name: description, label: "Descripción", widget: text, required: false }
-      - { name: price, label: "Precio (texto)", widget: string }
+      - { name: variant, label: "Variante (mediano / grande / extra)", widget: string, required: false }
+      - { name: price, label: "Precio (número, sin $)", widget: number, value_type: float }
       - name: category
         label: "Categoría"
-        widget: select
-        options: ["entradas", "principales", "postres", "bebidas"]
-      - { name: vegetarian, label: "Vegetariano", widget: boolean, default: false }
-      - { name: featured, label: "Destacado", widget: boolean, default: false }
-      - { name: order, label: "Orden", widget: number, default: 0 }
-      - { name: body, label: "(no usado)", widget: hidden, required: false }
+        widget: relation
+        collection: categories
+        search_fields: [title]
+        display_fields: [title]
+        value_field: "{{slug}}"
+      - { name: description, label: "Descripción", widget: text, required: false }
+      - { name: image, label: "Foto (opcional)", widget: image, required: false }
+      - { name: order, label: "Orden dentro de la categoría", widget: number, default: 0 }
+      - { name: available, label: "Disponible", widget: boolean, default: true }
 
-  - name: testimonials
-    label: "Testimonios"
-    folder: "src/content/testimonials"
+  - name: promos
+    label: "Promos / banners"
+    folder: "src/content/promos"
+    extension: "yaml"
+    format: "yaml"
     create: true
     slug: "{{slug}}"
+    identifier_field: text
     fields:
-      - { name: author, label: "Autor", widget: string }
-      - { name: quote, label: "Testimonio", widget: text }
-      - { name: rating, label: "Puntaje (1–5)", widget: number, min: 1, max: 5, required: false }
+      - { name: text, label: "Texto de la promo", widget: text }
+      - name: afterCategory
+        label: "Mostrar después de la categoría"
+        widget: relation
+        collection: categories
+        search_fields: [title]
+        display_fields: [title]
+        value_field: "{{slug}}"
       - { name: order, label: "Orden", widget: number, default: 0 }
-      - { name: body, label: "(no usado)", widget: hidden, required: false }
+      - { name: enabled, label: "Activada", widget: boolean, default: true }
