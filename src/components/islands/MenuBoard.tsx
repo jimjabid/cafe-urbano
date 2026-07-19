@@ -145,9 +145,9 @@ export default function MenuBoard({ categories, dishes, promos, placeholders }: 
                 aria-selected={active === c.id}
                 onClick={() => jumpTo(c.id)}
                 className={
-                  'flex shrink-0 items-center gap-2 rounded-pill border px-4 py-1.5 text-sm font-medium transition-colors ' +
+                  'flex shrink-0 items-center gap-2 rounded-pill border px-4 py-1.5 text-sm transition-colors ' +
                   (active === c.id
-                    ? 'border-ink bg-ink text-surface'
+                    ? 'border-ink bg-ink font-medium text-surface'
                     : 'border-ink/25 bg-surface text-ink')
                 }
               >
@@ -195,7 +195,13 @@ export default function MenuBoard({ categories, dishes, promos, placeholders }: 
                               (isOpen ? 'bg-surface-subtle' : 'hover:bg-surface-subtle/60')
                             }
                           >
-                            <span className="flex min-w-0 items-center gap-2.5">
+                            <span className="min-w-0 font-medium">
+                              {d.name}
+                              {d.variant && (
+                                <em className="ml-1.5 font-normal text-ink-soft"> {d.variant}</em>
+                              )}
+                            </span>
+                            <span className="flex shrink-0 items-center gap-2.5 whitespace-nowrap font-medium">
                               {d.image && (
                                 <img
                                   src={d.image}
@@ -203,17 +209,9 @@ export default function MenuBoard({ categories, dishes, promos, placeholders }: 
                                   width={40}
                                   height={40}
                                   loading="lazy"
-                                  className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                                  className="h-10 w-10 rounded-lg object-cover"
                                 />
                               )}
-                              <span className="font-medium">
-                                {d.name}
-                                {d.variant && (
-                                  <em className="ml-1.5 font-normal text-ink-soft"> {d.variant}</em>
-                                )}
-                              </span>
-                            </span>
-                            <span className="flex items-center gap-2 whitespace-nowrap font-semibold">
                               {d.price}
                               <svg
                                 aria-hidden="true"
@@ -240,7 +238,7 @@ export default function MenuBoard({ categories, dishes, promos, placeholders }: 
                                 <em className="ml-1.5 font-normal text-ink-soft"> {d.variant}</em>
                               )}
                             </span>
-                            <span className="whitespace-nowrap font-semibold">
+                            <span className="whitespace-nowrap font-medium">
                               {isExtra ? `+${d.price}` : d.price}
                             </span>
                           </div>

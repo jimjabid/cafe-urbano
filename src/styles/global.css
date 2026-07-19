@@ -18,7 +18,19 @@
   --color-ink: #1a1a1a;
   --color-ink-soft: #55534f;
 
-  /* Category accent dots — one per menu category (categories/*.yaml `dot` field) */
+  --radius-card: 20px;
+  --radius-pill: 100px;
+
+  --font-sans: "Poppins", system-ui, "Segoe UI", sans-serif;
+}
+
+/*
+ * Category accent dots — one per menu category (categories/*.yaml `dot` field).
+ * `@theme static` because these are consumed ONLY via inline style
+ * `var(--color-dot-*)` at runtime — a plain @theme block gets tree-shaken
+ * when no utility class references the token, and the dots silently vanish.
+ */
+@theme static {
   --color-dot-pink: #e3aed4;
   --color-dot-green: #c9dc8f;
   --color-dot-peach: #f2b096;
@@ -29,11 +41,6 @@
   --color-dot-lime: #c4e06e;
   --color-dot-teal: #8fd0dc;
   --color-dot-coral: #f2bc9e;
-
-  --radius-card: 20px;
-  --radius-pill: 100px;
-
-  --font-sans: "Poppins", system-ui, "Segoe UI", sans-serif;
 }
 
 /*
