@@ -29,6 +29,12 @@ auth:
 # Harmless in prod — only activates when `npx decap-server` runs locally.
 local_backend: true
 
+# Cap uploads at 2 MB. astro:assets re-optimizes served images at build time,
+# so this protects the git repo and build times, not the page weight.
+media_library:
+  config:
+    max_file_size: 2097152
+
 logo_url: https://jimjabid.github.io/cafe-urbano/og-logo.jpg
 site_url: https://jimjabid.github.io/cafe-urbano
 display_url: https://jimjabid.github.io/cafe-urbano
@@ -98,6 +104,7 @@ collections:
                 required: false
                 media_folder: "/public"
                 public_folder: "/"
+                hint: "Máx. 2 MB — ideal 1200×630. Comprimila en squoosh.app si pesa más."
 
   - name: categories
     label: "Categorías del menú"
@@ -144,7 +151,11 @@ collections:
         display_fields: [title]
         value_field: "{{slug}}"
       - { name: description, label: "Descripción", widget: text, required: false }
-      - { name: image, label: "Foto (opcional)", widget: image, required: false }
+      - name: image
+        label: "Foto (opcional)"
+        widget: image
+        required: false
+        hint: "Máx. 2 MB. Si tu foto pesa más, comprimila gratis en squoosh.app y volvé a subirla."
       # zod defaults these — entries without them are valid, so the CMS must not demand them
       - { name: order, label: "Orden dentro de la categoría", widget: number, default: 0, required: false }
       - { name: available, label: "Disponible", widget: boolean, default: true, required: false }
